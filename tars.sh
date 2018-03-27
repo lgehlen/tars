@@ -63,6 +63,14 @@ git_checkout(){
 	eval "git checkout -- ."
 }
 
+git_commit(){
+	echo "Entre com a menságem:"
+	read mensagem
+
+	eval "cd $pathHybris"
+	eval "git commit -m \"$mensagem\""
+}
+
 git_merge(){
 	eval "cd $pathHybris"
 	eval "git merge origin/develop"
@@ -92,21 +100,39 @@ platform(){
 	eval ". ./setantenv.sh"
 }
 
+server(){
+	platform
+	eval "./hybrisserver.sh debug"
+	log
+}
+
+server_all(){
+	platform
+	eval "ant all && ./hybrisserver.sh debug"
+	log
+}
+
+server_clean(){
+	platform
+	eval "ant clean all && ./hybrisserver.sh debug"
+	log
+}
+
 start(){
 	platform
-	eval "./hybrisserver.sh start debug"
+	eval "./hybrisserver.sh start"
 	log
 }
 
 start_all(){
 	platform
-	eval "ant all && ./hybrisserver.sh start debug"
+	eval "ant all && ./hybrisserver.sh start"
 	log
 }
 
 start_clean(){
 	platform
-	eval "ant clean all && ./hybrisserver.sh start debug"
+	eval "ant clean all && ./hybrisserver.sh start"
 	log
 }
 
@@ -208,6 +234,10 @@ do
 	then
 		git_checkout
 
+	elif [ "$ordem" == "git commit" ]
+	then
+		git_commit
+
 	elif [ "$ordem" == "git merge" ]
 	then		
 		valida_cmd $ordem
@@ -223,6 +253,18 @@ do
 	elif [ "$ordem" == "log x" ]
 	then
 		log_x
+
+	elif [ "$ordem" == "server" ]
+	then
+		server
+
+	elif [ "$ordem" == "server all" ] 
+	then
+		server_all
+
+	elif [ "$ordem" == "server clean" ] 
+	then
+		server_clean
 
 	elif [ "$ordem" == "start" ]
 	then
@@ -272,14 +314,19 @@ do
 		echo " git			| git status + sair"
 		echo " git add		| git add + (Seus Arquivos)"
 		echo " git checkout		| git checkout -- ."
+		echo " git commit		| git commit -m \"<SUA MENSÁGEM>\""
 		echo " git merge 		| git merge origin/develop"
 		echo " git status		| git status"
 		echo " log			| tail -f $log"
 		echo " log x			| tail -n (valor desejado) $log"
-		echo " start			| ./hybrisserver.sh start debug + tail -f $log"
-		echo " start all		| ant all && ./hybrisserver.sh start debug + tail -f $log"
-		echo " start clean		| ant clean all && ./hybrisserver.sh start debug + tail -f $log"
+		echo " server			| ./hybrisserver.sh debug + tail -f $log"
+		echo " server all		| ant all && ./hybrisserver.sh debug + tail -f $log"
+		echo " server clean		| ant clean all && ./hybrisserver.sh debug + tail -f $log"
+		echo " start			| ./hybrisserver.sh start + tail -f $log"
+		echo " start all		| ant all && ./hybrisserver.sh start + tail -f $log"
+		echo " start clean		| ant clean all && ./hybrisserver.sh start + tail -f $log"
 		echo " stop			| ./hybrisserver.sh stop"
+		echo " update			| ant updatesystem"
 		echo " yarn build		| yarn run build"
 		echo " yarn full		| yarn run setup && yarn run build"
 		echo " yarn setup		| yarn run setup"
